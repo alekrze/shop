@@ -25,91 +25,68 @@ zwraca tablicę zamówień
 * funkcja zwracająca całkowitą wartość zamówień
  */
 public class Shop {
+    private final Order[] orders;
+    private int count = 0;
 
-    public static Order newOrder(Product product, int quantity, String clientName) {
+    public Shop(int capacity) {
+        orders = new Order[capacity];
+    }
+
+    public Order newOrder(Product product, int quantity, String clientName) {
+        if (count >= orders.length) {
+            return null;
+        }
         Order order = new Order(product, quantity, clientName);
+        orders[count] = order;
+        count++;
         return order;
     }
 
-    public static BigDecimal ordersValueInTotal(Order[] orders) {
+    public BigDecimal ordersValueInTotal() {
         BigDecimal ordersValueInTotal;
         ordersValueInTotal = BigDecimal.ZERO;
         BigDecimal sum;
         sum = BigDecimal.ZERO;
 
-        for (Order order : orders) {
-            ordersValueInTotal = sum.add(order.totalAmountOfOrder());
+        for (int i = 0; i < count; i++) {
+            ordersValueInTotal = sum.add(orders[i].totalAmountOfOrder());
             sum = ordersValueInTotal;
         }
 
         return ordersValueInTotal;
     }
 
-    public static Order[] searchByProduct(String string, Order[] orders) {
+    public Order[] searchByProduct(String string) {
         Order[] searchByProduct = new Order[orders.length];
-        int count = 0;
+        int resultsCount = 0;
 
-        for (Order order : orders) {
-            if (order.getProduct().getName().contains(string)) {
-                searchByProduct[count] = order;
-                count++;
+        for (int i = 0; i < count; i++) {
+            if (orders[i].getProduct().getName().contains(string)) {
+                searchByProduct[resultsCount] = orders[i];
+                resultsCount++;
             }
         }
-        searchByProduct = Arrays.copyOf(searchByProduct, count);
+        searchByProduct = Arrays.copyOf(searchByProduct, resultsCount);
 
         return searchByProduct;
     }
 
-    public static Order[] searchByClient(String string, Order[] orders) {
+    public Order[] searchByClient(String string) {
         Order[] searchByClient = new Order[orders.length];
-        int count = 0;
+        int resultsCount = 0;
 
-        for (Order order : orders) {
-            if (order.getClientName().contains(string)) {
-                searchByClient[count] = order;
-                count++;
+        for (int i = 0; i < count; i++) {
+            if (orders[i].getClientName().contains(string)) {
+                searchByClient[resultsCount] = orders[i];
+                resultsCount++;
             }
         }
-        searchByClient = Arrays.copyOf(searchByClient, count);
+        searchByClient = Arrays.copyOf(searchByClient, resultsCount);
 
         return searchByClient;
     }
 
-
-    public static void main(String[] args) {
-        final Order[] orders;
-
-        Product product1 = new Product("Czekolada Milka", BigDecimal.valueOf(3.20));
-        Product product2 = new Product("Czekolada Goplana", BigDecimal.valueOf(2.20));
-        Product product3 = new Product("Czekolada Wedel", BigDecimal.valueOf(3.00));
-        Product product4 = new Product("Czekolada Terravita", BigDecimal.valueOf(1.90));
-
-        Order order1 = newOrder(product1, 3, "Wojciech");
-        Order order2 = newOrder(product1, 1, "Magda");
-        Order order3 = newOrder(product2, 3, "Tomasz");
-        Order order4 = newOrder(product3, 10, "Tomasz");
-        Order order5 = newOrder(product4, 2, "Arkadiusz");
-
-        orders = new Order[]{order1, order2, order3, order4, order5};
-
-        for (Order order : orders) {
-            System.out.println(order.toString());
-            System.out.println("Kwota za zamówienie: " + order.totalAmountOfOrder() + "\n");
-        }
-
-        System.out.println("Kwota za wszystkie zamówienia łącznie to " + ordersValueInTotal(orders) + "\n");
-
-
-        System.out.println("\nWyszukaj klienta: ");
-        Order[] ordersByClient = searchByClient("Woj", orders);
-        System.out.println(Arrays.toString(ordersByClient));
-
-        System.out.println("\nWyszukaj produkt: ");
-        Order[] ordersByProduct = searchByProduct("Wed", orders);
-        System.out.println(Arrays.toString(ordersByProduct));
-
-
+    public Order[] getOrders() {
+        return Arrays.copyOf(orders, count);
     }
-
-
 }
