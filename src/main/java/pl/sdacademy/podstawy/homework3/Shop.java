@@ -1,6 +1,7 @@
 package pl.sdacademy.podstawy.homework3;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 /*
 Prosty sklep
@@ -25,8 +26,6 @@ zwraca tablicę zamówień
  */
 public class Shop {
 
-    public static Order[] orders;
-
     public static Order newOrder(Product product, int quantity, String clientName) {
         Order order = new Order(product, quantity, clientName);
         return order;
@@ -35,17 +34,50 @@ public class Shop {
     public static BigDecimal ordersValueInTotal(Order[] orders) {
         BigDecimal ordersValueInTotal;
         ordersValueInTotal = BigDecimal.ZERO;
-        BigDecimal sum = BigDecimal.ZERO;
+        BigDecimal sum;
+        sum = BigDecimal.ZERO;
 
         for (Order order : orders) {
-            ordersValueInTotal = sum.add(order.totalAmountOfOrder()) ;
+            ordersValueInTotal = sum.add(order.totalAmountOfOrder());
             sum = ordersValueInTotal;
         }
 
         return ordersValueInTotal;
     }
 
+    public static Order[] searchByProduct(String string, Order[] orders) {
+        Order[] searchByProduct = new Order[orders.length];
+        int count = 0;
+
+        for (Order order : orders) {
+            if (order.getProduct().getName().contains(string)) {
+                searchByProduct[count] = order;
+                count++;
+            }
+        }
+        searchByProduct = Arrays.copyOf(searchByProduct, count);
+
+        return searchByProduct;
+    }
+
+    public static Order[] searchByClient(String string, Order[] orders) {
+        Order[] searchByClient = new Order[orders.length];
+        int count = 0;
+
+        for (Order order : orders) {
+            if (order.getClientName().contains(string)) {
+                searchByClient[count] = order;
+                count++;
+            }
+        }
+        searchByClient = Arrays.copyOf(searchByClient, count);
+
+        return searchByClient;
+    }
+
+
     public static void main(String[] args) {
+        final Order[] orders;
 
         Product product1 = new Product("Czekolada Milka", BigDecimal.valueOf(3.20));
         Product product2 = new Product("Czekolada Goplana", BigDecimal.valueOf(2.20));
@@ -65,9 +97,19 @@ public class Shop {
             System.out.println("Kwota za zamówienie: " + order.totalAmountOfOrder() + "\n");
         }
 
-        System.out.println("Kwota za wszystkie zamówienia łącznie to " + ordersValueInTotal(orders));
+        System.out.println("Kwota za wszystkie zamówienia łącznie to " + ordersValueInTotal(orders) + "\n");
+
+
+        System.out.println("\nWyszukaj klienta: ");
+        Order[] ordersByClient = searchByClient("Woj", orders);
+        System.out.println(Arrays.toString(ordersByClient));
+
+        System.out.println("\nWyszukaj produkt: ");
+        Order[] ordersByProduct = searchByProduct("Wed", orders);
+        System.out.println(Arrays.toString(ordersByProduct));
 
 
     }
+
 
 }
